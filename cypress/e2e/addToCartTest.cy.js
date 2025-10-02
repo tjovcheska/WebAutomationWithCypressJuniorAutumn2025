@@ -31,46 +31,49 @@
 // 	•	Cart shows both products before removal
 // 	•	After removing Sauce Labs Backpack, only Sauce Labs Bike Light remains
 
-it("should login, add 2 specific products, validate cart, remove first product from cart", () => {
-    // 1 step: Open the website
-    cy.visit("/")
+describe("Add to cart test", () => {
+    it("should login, add 2 specific products, validate cart, remove first product from cart", () => {
+        // 1 step: Open the website
+        cy.visit("/")
 
-    // 2 step: Login with standard_user
-    cy.get('[data-test="username"]').should('be.visible').type("standard_user")
-    cy.get('[data-test="password"]').should('be.visible').type("secret_sauce")
-    cy.get('[data-test="login-button"]').should('be.visible').click()
+        // 2 step: Login with standard_user
+        cy.fixture("users").then((user) => {
+            cy.get('[data-test="username"]').should('be.visible').type(user.standard_user.username);
+            cy.get('[data-test="password"]').should('be.visible').type(user.standard_user.password);
+        });
+        cy.get('[data-test="login-button"]').should('be.visible').click()
 
-    cy.url().should("include", "inventory.html")
+        cy.url().should("include", "inventory.html")
 
-    // 3 step: Add product to the cart
-    // cy.get('[data-test="add-to-cart-sauce-labs-backpack"]').should('be.visible').click()
-    // cy.get('[data-test="add-to-cart-sauce-labs-bike-light"]').should('be.visible').click()
+        // 3 step: Add product to the cart
+        // cy.get('[data-test="add-to-cart-sauce-labs-backpack"]').should('be.visible').click()
+        // cy.get('[data-test="add-to-cart-sauce-labs-bike-light"]').should('be.visible').click()
 
-    // This approach is more flexible and scalable (if the Add To Cart button has the same locator for all products)
-    const productsToAdd = ['Sauce Labs Backpack', 'Sauce Labs Bike Light'];
-    const productsToAddLocators = ['backpack', 'bike-light'];
-    productsToAddLocators.forEach((locator) => {
-        // console.log(productName);
-        cy.get(`[data-test="add-to-cart-sauce-labs-${locator}"]`).should('be.visible').click()
+        // This approach is more flexible and scalable (if the Add To Cart button has the same locator for all products)
+        const productsToAdd = ['Sauce Labs Backpack', 'Sauce Labs Bike Light'];
+        const productsToAddLocators = ['backpack', 'bike-light'];
+        productsToAddLocators.forEach((locator) => {
+            // console.log(productName);
+            cy.get(`[data-test="add-to-cart-sauce-labs-${locator}"]`).should('be.visible').click()
+        });
+
+        // 4 step: Open the cart
+        cy.get('[data-test="shopping-cart-link"]').should('be.visible').click()
+
+        cy.url().should("include", "cart.html")
+
+        // 5 steps: Validate the product in the cart
+        // cy.contains('.cart_item', 'Sauce Labs Backpack').should('be.visible')
+        // cy.contains('.cart_item', 'Sauce Labs Bike Light').should('be.visible')
+        productsToAdd.forEach((productName) => {
+            cy.contains('.cart_item', productName).should('be.visible')  
+        });
+
+        // 6 step: Remove the first product from the cart
+        cy.contains('.cart_item', 'Sauce Labs Backpack').find('button').click();
+
+        // 7 step: Validate that the sendon priduct remains in the cart
+        cy.get('.cart_item').should('have.length', 1).and('contain.text', 'Sauce Labs Bike Light')
+
     });
-
-    // 4 step: Open the cart
-    cy.get('[data-test="shopping-cart-link"]').should('be.visible').click()
-
-    cy.url().should("include", "cart.html")
-
-    // 5 steps: Validate the product in the cart
-    // cy.contains('.cart_item', 'Sauce Labs Backpack').should('be.visible')
-    // cy.contains('.cart_item', 'Sauce Labs Bike Light').should('be.visible')
-    productsToAdd.forEach((productName) => {
-        cy.contains('.cart_item', productName).should('be.visible')  
-    });
-
-    // 6 step: Remove the first product from the cart
-    cy.contains('.cart_item', 'Sauce Labs Backpack').find('button').click();
-
-    // 7 step: Validate that the sendon priduct remains in the cart
-    cy.get('.cart_item').should('have.length', 1).and('contain.text', 'Sauce Labs Bike Light')
-
 });
-
