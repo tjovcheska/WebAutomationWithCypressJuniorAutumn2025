@@ -1,3 +1,6 @@
+import LoginPage from "../pageObjects/LoginPage";
+import Navigation from "../pageObjects/Navigation";
+
 describe("Login tests with fixture data", () => {
     const testCases = [
         { username: "standard_user", password: "secret_sauce", shouldBeLoggedIn: true },
@@ -6,20 +9,20 @@ describe("Login tests with fixture data", () => {
     ];
 
     beforeEach(() => {
-        cy.visit("/");
+        Navigation.goToLoginPage();
     });
 
     testCases.forEach(testCase => {
         it(`should log in with: ${testCase.username}`, () => {
-            cy.get('[data-test="username"]').should('be.visible').type(testCase.username);
-            cy.get('[data-test="password"]').should('be.visible').type(testCase.password);
+            LoginPage.fillUsername(testCase.username);
+            LoginPage.fillPassword(testCase.password);
 
-            cy.get('[data-test="login-button"]').should('be.visible').click();
+            LoginPage.clickLoginButton();
 
             if (testCase.shouldBeLoggedIn) {
-                cy.url().should("include", "inventory.html");
+                Navigation.verifyUrlContains("inventory.html");
             } else {
-                cy.url().should("eq", "https://www.saucedemo.com/"); 
+                Navigation.verifyUrlEquals("https://www.saucedemo.com/"); 
             }
         });
     });

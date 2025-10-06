@@ -30,20 +30,24 @@
 // 	•	Both products are added to the cart
 // 	•	Cart shows both products before removal
 // 	•	After removing Sauce Labs Backpack, only Sauce Labs Bike Light remains
+import LoginPage from "../pageObjects/LoginPage";
+import Navigation from "../pageObjects/Navigation";
+import InventoryPage from "../pageObjects/InventoryPage";
 
 describe("Add to cart test", () => {
     it("should login, add 2 specific products, validate cart, remove first product from cart", () => {
         // 1 step: Open the website
-        cy.visit("/")
+        Navigation.goToLoginPage();
 
         // 2 step: Login with standard_user
         cy.fixture("users").then((user) => {
-            cy.get('[data-test="username"]').should('be.visible').type(user.standard_user.username);
-            cy.get('[data-test="password"]').should('be.visible').type(user.standard_user.password);
+            LoginPage.fillUsername(user.standard_user.username);
+            LoginPage.fillPassword(user.standard_user.password);
         });
-        cy.get('[data-test="login-button"]').should('be.visible').click()
+        
+        LoginPage.clickLoginButton();
 
-        cy.url().should("include", "inventory.html")
+        Navigation.verifyUrlContains("inventory.html");
 
         // 3 step: Add product to the cart
         // cy.get('[data-test="add-to-cart-sauce-labs-backpack"]').should('be.visible').click()
@@ -54,12 +58,13 @@ describe("Add to cart test", () => {
         const productsToAddLocators = ['backpack', 'bike-light'];
         productsToAddLocators.forEach((locator) => {
             // console.log(productName);
-            cy.get(`[data-test="add-to-cart-sauce-labs-${locator}"]`).should('be.visible').click()
+            InventoryPage.clickAddToCartButton(locator);
         });
 
         // 4 step: Open the cart
-        cy.get('[data-test="shopping-cart-link"]').should('be.visible').click()
+        InventoryPage.clickShoppingCartLink();
 
+        // TODO: Refactor the code below using Page Object Model
         cy.url().should("include", "cart.html")
 
         // 5 steps: Validate the product in the cart
@@ -74,6 +79,5 @@ describe("Add to cart test", () => {
 
         // 7 step: Validate that the sendon priduct remains in the cart
         cy.get('.cart_item').should('have.length', 1).and('contain.text', 'Sauce Labs Bike Light')
-
     });
 });
