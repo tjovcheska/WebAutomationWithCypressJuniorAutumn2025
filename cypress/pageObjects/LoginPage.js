@@ -20,7 +20,7 @@ class LoginPage {
     }
 
     verifyLoginPageTitle(title) {
-        this.loginPage.should('be.visible').should('contain.text', title);
+        this.loginPage().should('be.visible').should('contain.text', title);
     }
 
     verifyLoginPageLogo(title) {
@@ -28,11 +28,11 @@ class LoginPage {
     }
 
     verifyLoginPageTitleVisibility() {
-        this.loginPageTitle.should('be.visible');
+        this.loginPageTitle().should('be.visible');
     }
 
     verifyErrorMessage(message) {
-        this.errorMessage.should('be.visible').should(
+        this.errorMessage().should('be.visible').should(
             'have.text', message
         );   
     }

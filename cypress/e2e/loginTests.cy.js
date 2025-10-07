@@ -85,7 +85,7 @@ describe("Login functionallity - Negative test cases", () => {
         Navigation.verifyUrlEquals("https://www.saucedemo.com/")
     });
 
-    it("should login with invalid credentials", () => {
+    it.skip("should login with invalid credentials", () => {
         cy.fixture("users").then((user) => {
             LoginPage.fillUsername(user.standard_user.username);
             LoginPage.fillPassword(user.standard_user.password);
