@@ -15,6 +15,17 @@ module.exports = defineConfig({
     videosFolder: "cypress/videos",
     screenshotOnRunFailure: true,
     screenshotsFolder: "cypress/screenshots",
+    trashAssetsBeforeRuns: true
     // defaultBrowser: "firefox",
   },
+  reporter: 'cypress-multi-reporters',
+  reporterOptions: {
+    reporterEnabled: 'mochawesome',
+    mochawesomeReporterOptions: {
+      reportDir: 'cypress/reports/mocha',
+      overwrite: false,
+      html: false,
+      json: true
+    }
+  }
 });
